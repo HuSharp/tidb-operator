@@ -1299,6 +1299,7 @@ ARGS=" services tso --listen-addr=https://0.0.0.0:2379 \
 --advertise-listen-addr=https://${domain}:2379 \
 --backend-endpoints=${result} \
 --config=/etc/pd/pd.toml \
+--log-file=/var/lib/pdms/tso.log \
 "
 
 echo "starting pd-server ..."

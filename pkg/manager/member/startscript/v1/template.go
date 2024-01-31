@@ -252,6 +252,7 @@ ARGS="` + pdEnableMicroService + `--listen-addr={{ .Scheme }}://0.0.0.0:2379 \
 --advertise-listen-addr={{ .Scheme }}://${domain}:2379 \
 --backend-endpoints=${result} \
 --config=/etc/pd/pd.toml \
+--log-file={{ .LogFile }} \
 "
 
 echo "starting pd-server ..."
@@ -317,7 +318,7 @@ type PdMSStartScriptModel struct {
 	CommonModel
 
 	Scheme    string
-	DataDir   string
+	LogFile   string
 	PDAddress string
 }
 

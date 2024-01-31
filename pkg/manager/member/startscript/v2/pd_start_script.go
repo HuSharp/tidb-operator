@@ -45,8 +45,7 @@ type PDMSStartScriptModel struct {
 	PDMSDomain string
 	PDMSName   string
 
-	DataDir string
-
+	LogFile             string
 	ListenAddr          string
 	AdvertiseListenAddr string
 	BackendEndpoints    string
@@ -127,7 +126,6 @@ func renderPDMSStartScript(tc *v1alpha1.TidbCluster, name string) (string, error
 	tcNS := tc.Namespace
 	peerServiceName := controller.PDMSMemberName(tcName, name)
 
-	m.DataDir = constants.PDMSDataVolumeMountPath
 	m.PDMSDomain = fmt.Sprintf("${PDMS_POD_NAME}.%s.%s.svc", peerServiceName, tcNS)
 	if tc.Spec.ClusterDomain != "" {
 		m.PDMSDomain = m.PDMSDomain + "." + tc.Spec.ClusterDomain
@@ -145,6 +143,8 @@ func renderPDMSStartScript(tc *v1alpha1.TidbCluster, name string) (string, error
 	m.DiscoveryAddr = fmt.Sprintf("%s-discovery.%s:10261", tcName, tcNS)
 
 	m.BackendEndpoints = fmt.Sprintf("%s://${PDMS_DOMAIN}:%d", tc.Scheme(), v1alpha1.DefaultPDPeerPort)
+
+	m.LogFile = fmt.Sprintf("/var/lib/pdms/%s.log", name)
 
 	msStartSubScript := ``
 	msStartScriptTpl := template.Must(
@@ -245,7 +245,8 @@ exec /pd-server ${ARGS}
 ARGS="` + pdEnableMicroService + `--listen-addr={{ .ListenAddr }} \
 --advertise-listen-addr={{ .AdvertiseListenAddr }} \
 --backend-endpoints={{ .BackendEndpoints }} \
---config=/etc/pd/pd.toml \
+--config=/etc/pdms/pd.toml \
+--log-file={{ .LogFile }} \
 "
 
 echo "starting pd-server ..."

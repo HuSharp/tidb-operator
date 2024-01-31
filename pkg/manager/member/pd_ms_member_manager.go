@@ -461,7 +461,7 @@ func (m *pdMSMemberManager) getNewPDMSStatefulSet(tc *v1alpha1.TidbCluster, cm *
 	annMount, annVolume := annotationsMountVolume()
 	volMounts := []corev1.VolumeMount{
 		annMount,
-		{Name: "config", ReadOnly: true, MountPath: "/etc/pd"},
+		{Name: "config", ReadOnly: true, MountPath: "/etc/pdms"},
 		{Name: "startup-script", ReadOnly: true, MountPath: "/usr/local/bin"},
 	}
 	if tc.IsTLSClusterEnabled() {
